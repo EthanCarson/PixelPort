@@ -1,1 +1,22 @@
+# Git
+.git
+.gitignore
+
+# Node
 node_modules
+
+# Docker
+.dockerignore
+Dockerfile
+docker-compose.yml
+docker-compose.dev.yml
+
+# IDEs and OS
+.idea
+.vscode
+.DS_Store
+Thumbs.db
+
+# Logs and temp files
+*.log
+npm-debug.log*

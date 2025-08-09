@@ -5,7 +5,9 @@ version: '3.8'
 services:
   pixelport-dev: # Use a different service name to avoid conflicts
     # We still build from the same Dockerfile
-    build: .
+    build:
+      context: .
+      target: builder
     # The command is changed to run Vite's dev server, not the Deno server.
     # This provides hot-reloading.
     command: npm run dev

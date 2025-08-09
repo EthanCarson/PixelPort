@@ -4,9 +4,10 @@
   "description": "A SolidJS app served with Deno.",
   "scripts": {
     "build": "vite build",
-    "dev": "vite"
+    "dev": "vite --host"
   },
   "dependencies": {
+    "@sanity/client": "^7.8.2",
     "solid-js": "^1.8.17"
   },
   "devDependencies": {
