@@ -1,0 +1,23 @@
+# Specifies the version of the Docker Compose file format.
+# Version '3.8' is a good, modern choice.
+version: '3.8'
+
+# 'services' is a required key that defines the containers for your application.
+services:
+  # This is the name of your service. You can name it anything, e.g., 'web' or 'app'.
+  # We'll use 'pixelport' to match the project name.
+  pixelport:
+    # The 'build' instruction tells Docker Compose to build an image.
+    # The '.' value means "use the Dockerfile in the current directory".
+    build: .
+    # 'image' sets the name and tag for the image that is built.
+    image: digitalec414/pixelport
+    # 'ports' maps ports from the host machine to the container.
+    # The format is "HOST_PORT:CONTAINER_PORT".
+    # This makes your application accessible at http://localhost:3000.
+    ports:
+      - "3000:3000"
+    # 'restart' defines the policy for restarting the container.
+    # 'unless-stopped' ensures the container restarts automatically (e.g., after a reboot)
+    # unless you manually stop it.
+    restart: unless-stopped

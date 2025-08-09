@@ -1,0 +1,22 @@
+# docker-compose.dev.yml - For Development Use
+
+version: '3.8'
+
+services:
+  pixelport-dev: # Use a different service name to avoid conflicts
+    # We still build from the same Dockerfile
+    build: .
+    # The command is changed to run Vite's dev server, not the Deno server.
+    # This provides hot-reloading.
+    command: npm run dev
+    ports:
+      # Expose Vite's default port (5173) instead of the Deno server's port (3000)
+      - "5173:5173"
+    volumes:
+      # 1. Mount the current directory on the host to /app in the container
+      - .:/app
+      # 2. Use a named volume for node_modules to prevent it from being overwritten.
+      # This tells Docker: "Keep the /app/node_modules from the image, don't
+      # use the host's."
+      - /app/node_modules
+    restart: unless-stopped
