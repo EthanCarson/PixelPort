@@ -3,15 +3,15 @@ import Hammer from "hammerjs";
 
 const WorldImage: Component = () => {
   let containerRef: HTMLDivElement | undefined;
-  let imgRef: HTMLImageElement | undefined;
+  let pannableRef: HTMLDivElement | undefined;
 
   const [position, setPosition] = createSignal({ x: 0, y: 0 });
   const [scale, setScale] = createSignal(1);
   const [isAnimating, setIsAnimating] = createSignal(false);
 
   onMount(() => {
-    if (imgRef && containerRef) {
-      const hammer = new Hammer(imgRef);
+    if (containerRef && pannableRef) {
+      const hammer = new Hammer(containerRef);
       hammer.get("pan").set({ direction: Hammer.DIRECTION_ALL });
       hammer.get("pinch").set({ enable: true });
 
@@ -21,7 +21,7 @@ const WorldImage: Component = () => {
       hammer.on("panstart pinchstart", () => {
         lastPosition = position();
         lastScale = scale();
-        setIsAnimating(false); // Stop animation when user interacts
+        setIsAnimating(false);
       });
 
       hammer.on("panmove", (e) => {
@@ -31,35 +31,29 @@ const WorldImage: Component = () => {
         });
       });
 
-      hammer.on("pinchin pinchout", (e) => { //Change scale on pinch
+      hammer.on("pinchin pinchout", (e) => {
         setScale(lastScale * e.scale);
       });
 
       hammer.on("panend", () => {
         const currentPosition = position();
         const currentScale = scale();
+
         const containerWidth = containerRef!.clientWidth;
-        const imgWidth = imgRef!.clientWidth * currentScale;
+        const pannableWidth = pannableRef!.scrollWidth * currentScale;
 
         let newX = currentPosition.x;
-        let newY = currentPosition.y;
+        const newY = currentPosition.y; // Y position is not clamped
 
-        // Check left boundary
+        // Clamp X (horizontal) position
         if (newX > 0) {
           newX = 0;
-        }
-        // Check right boundary
-        else if (newX < containerWidth - imgWidth) {
-          newX = containerWidth - imgWidth;
+        } else if (newX < containerWidth - pannableWidth) {
+          newX = containerWidth - pannableWidth;
         }
 
-        // Check top boundary
-        if (newY > 0) {
-          newY = 0;
-        }
-        // No check for bottom boundary, as requested.
-
-        if (newX !== currentPosition.x || newY !== currentPosition.y) {
+        // Animate and set position only if X has changed
+        if (newX !== currentPosition.x) {
           setIsAnimating(true);
           setPosition({ x: newX, y: newY });
         }
@@ -69,17 +63,35 @@ const WorldImage: Component = () => {
 
   return (
     <div id="WorldImage" ref={containerRef}>
-      <img
-        ref={imgRef}
-        src="tempy.png"
-        alt="Map"
+      <div
+        ref={pannableRef}
         style={{
+          position: "relative",
+          "transform-origin": "0 0", // Set transform origin to top-left
           transform: `translate(${position().x}px, ${position().y}px) scale(${scale()})`,
           "touch-action": "none",
           "user-select": "none",
           transition: isAnimating() ? "transform 0.3s ease-out" : "none",
         }}
-      />
+      >
+        <img
+          src="tempy.png"
+          alt="Map"
+          style={{
+            "pointer-events": "none",
+          }}
+        />
+        <img
+          src="temphouse.png"
+          alt="House"
+          style={{
+            position: "absolute",
+            top: "150px",
+            left: "1020px",
+            "pointer-events": "none",
+          }}
+        />
+      </div>
     </div>
   );
 };
