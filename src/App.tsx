@@ -1,9 +1,9 @@
-import { Component } from 'solid-js';
-
+import { Component } from "solid-js";
+import WorldContainer from "./Components/WorldContainer";
 const App: Component = () => {
   return (
-    <div>
-      <div id="Canvas"></div>
+    <div id="App">
+      <WorldContainer />
     </div>
   );
 };
