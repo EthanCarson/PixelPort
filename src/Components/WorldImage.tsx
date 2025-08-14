@@ -1,4 +1,5 @@
 import { Component, onMount, createSignal } from "solid-js";
+import Landmark from "./Landmark";
 import Hammer from "hammerjs";
 
 const WorldImage: Component = () => {
@@ -58,7 +59,7 @@ const WorldImage: Component = () => {
         const pannableWidth = pannableRef!.scrollWidth * currentScale;
 
         let newX = currentPosition.x;
-        const newY = currentPosition.y; // Y position is not clamped, allowing free vertical scroll
+        let newY = currentPosition.y; // Y position is not clamped, allowing free vertical scroll
 
         // Clamp X (horizontal) position to keep the image within the container's horizontal bounds
         if (newX > 0) {
@@ -66,12 +67,48 @@ const WorldImage: Component = () => {
         } else if (newX < containerWidth - pannableWidth) {
           newX = containerWidth - pannableWidth; // Prevent panning past the right edge
         }
-
+        if (newY > 0) {
+          newY = 0; // Prevent panning past the left edge
+        }
         // If the position was adjusted, trigger the animation to snap it back smoothly
-        if (newX !== currentPosition.x) {
+        if (newX !== currentPosition.x || newY !== currentPosition.y) {
           setIsAnimating(true);
           setPosition({ x: newX, y: newY });
         }
+      });
+
+      // --- MOUSE WHEEL SCROLL ---
+      containerRef.addEventListener("wheel", (e) => {
+        e.preventDefault(); // Prevent default page scroll
+
+        const currentPosition = position();
+        const currentScale = scale();
+
+        // Calculate new Y position
+        let newY = currentPosition.y - e.deltaY; // Adjust Y based on wheel delta
+
+        // Get dimensions for clamping
+        const containerHeight = containerRef!.clientHeight;
+        const pannableHeight = pannableRef!.scrollHeight * currentScale;
+
+        // Clamp Y (vertical) position to keep the image within the container's vertical bounds
+        // Prevent scrolling past the top edge
+        if (newY > 0) {
+          newY = 0;
+        }
+
+        // Prevent scrolling past the bottom edge, but only if the content is taller than the container
+        if (pannableHeight > containerHeight) {
+          if (newY < containerHeight - pannableHeight) {
+            newY = containerHeight - pannableHeight;
+          }
+        } else {
+          // If content is not taller than container, don't allow vertical scrolling
+          newY = 0;
+        }
+
+        // Update the position
+        setPosition({ x: currentPosition.x, y: newY });
       });
     }
   });
@@ -86,7 +123,9 @@ const WorldImage: Component = () => {
         style={{
           position: "relative", // Establishes a positioning context for child images
           "transform-origin": "0 0", // Sets the zoom origin to the top-left corner for correct boundary calculations
-          transform: `translate(${position().x}px, ${position().y}px) scale(${scale()})`,
+          transform: `translate(${position().x}px, ${
+            position().y
+          }px) scale(${scale()})`,
           "touch-action": "none", // Disables default touch actions like scrolling
           "user-select": "none", // Prevents text selection while dragging
           transition: isAnimating() ? "transform 0.3s ease-out" : "none", // Smooth animation for boundary snapping
@@ -101,16 +140,7 @@ const WorldImage: Component = () => {
           }}
         />
         {/* Overlay image, positioned absolutely relative to the landscape */}
-        <img
-          src="temphouse.png"
-          alt="House"
-          style={{
-            position: "absolute",
-            top: "150px",
-            left: "1020px",
-            "pointer-events": "none", // Prevents the image from interfering with gestures
-          }}
-        />
+        <Landmark src="temphouse.png" alt="house" top="1020px" left="500px" />
       </div>
     </div>
   );

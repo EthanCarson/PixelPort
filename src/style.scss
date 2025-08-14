@@ -4,10 +4,14 @@
     box-sizing: border-box;
 }
 
-html, body, #root, #App, #WorldContainer {
+html,
+body,
+#root,
+#App,
+#WorldContainer {
     width: 100%;
     height: 100%;
-    overflow: hidden;
+    align-items: flex-start;
 }
 
 #WorldImage {
