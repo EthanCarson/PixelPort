@@ -1,3 +1,6 @@
+// This component displays the world map image.
+// Created on 8/15/2025 by Ethan Carson with help from Google Gemini.
+
 import { Component, onMount, createSignal } from "solid-js";
 import Landmark from "./Landmark";
 import Hammer from "hammerjs";

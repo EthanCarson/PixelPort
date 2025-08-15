@@ -1,3 +1,6 @@
+# This file defines the Docker image for the PixelPort application.
+# Created on 8/15/2025 by Ethan Carson with help from Google Gemini.
+
 # Stage 1: Build the frontend
 FROM node:20-alpine AS builder
 

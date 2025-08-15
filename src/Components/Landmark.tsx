@@ -1,3 +1,6 @@
+// This component represents a landmark on the world map.
+// Created on 8/15/2025 by Ethan Carson with help from Google Gemini.
+
 import { Component } from "solid-js";
 interface LandmarkProps {
   src: string;

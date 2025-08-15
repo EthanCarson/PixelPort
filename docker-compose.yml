@@ -1,3 +1,6 @@
+# This file defines the Docker services for the production environment.
+# Created on 8/15/2025 by Ethan Carson with help from Google Gemini.
+
 # Specifies the version of the Docker Compose file format.
 # Version '3.8' is a good, modern choice.
 version: '3.8'
